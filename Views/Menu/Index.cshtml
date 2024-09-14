@@ -1,0 +1,70 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model List<MealCategoryWithMealsVM>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    int totalMeals = @Model.SelectMany(m => m.Meals).Count();
+    int mealCount = 1;
+    int columnsBreakpoint = totalMeals / 2;
+    <div class="container menu">
+        <div class="row">
+            <h2> MENU</h2>
+            <div class="col-md-6">
+                @foreach (var mealCategory in Model)
+                {
+                    <h3 class="my-4 meal-category">@mealCategory.Name.ToUpper()</h3>
+                    @if (mealCategory.Meals != null && mealCategory.Meals.Any())
+                    {
+
+                        @foreach (var meal in mealCategory.Meals.TakeWhile(m => mealCount <= columnsBreakpoint))
+                        {
+                            <div class="menu-item mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="meal-name mb-0">@meal.Name.ToUpper()</h5>
+                                    <h6 class="meal-price">@meal.Price</h6>
+                                </div>
+                                <p class="meal-description mt-2">@meal.Description</p>
+                            </div>
+                            mealCount++;
+                            // kontrollera om det slutar mitt eller efter en kategori
+                        }
+                        @if (mealCount > columnsBreakpoint) break;
+                    }
+                    @if (mealCount > columnsBreakpoint) break;
+                }
+            </div>
+            @{
+                mealCount = 1;
+            }
+            <div class="col-md-6">
+                @foreach (var mealCategory in Model)
+                {
+                    @if (mealCount > columnsBreakpoint)
+                    {
+                        <h3 class="my-4 meal-category">@mealCategory.Name.ToUpper()</h3>
+                    }
+                    @if (mealCategory.Meals != null && mealCategory.Meals.Any())
+                    {
+
+                        @foreach (var meal in mealCategory.Meals)
+                        {
+                            @if (mealCount > columnsBreakpoint)
+                            {
+                                <div class="menu-item mb-4">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 class="meal-name mb-0">@meal.Name.ToUpper()</h5>
+                                        <h6 class="meal-price">@meal.Price</h6>
+                                    </div>
+                                    <p class="meal-description mt-2">@meal.Description</p>
+                                </div>
+                            }
+                            mealCount++;
+                            // kontrollera om det slutar mitt eller efter en kategori
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
