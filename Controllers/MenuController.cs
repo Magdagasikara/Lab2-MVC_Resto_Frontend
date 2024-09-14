@@ -26,5 +26,18 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response,options);
             return View(menu);
         }
+        public async Task<IActionResult> DealOfTheDay()
+        {
+            var response = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}menu");
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response, options);
+            var meals = menu.Select(m => m.Meals).ToList(); 
+            return PartialView("_DealOfTheDay", meals); // Skicka med modellen till partial view
+        }
     }
+    
 }

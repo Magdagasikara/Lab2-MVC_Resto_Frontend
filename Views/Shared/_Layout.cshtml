@@ -35,12 +35,23 @@
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container>
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
+    @* det ska komma nån annanstans????.....*@
+    <div class="offcanvas offcanvas-center offcanvas-dark" tabindex="-1" id="offcanvasDeal" aria-labelledby="offcanvasDealLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDealLabel">Deal of the Day</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="offcanvasContent">
+            <!-- Dynamiskt innehåll -->
+            <partial name="_DealOfTheDay" />
+        </div>
+    </div>
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - Magda for WOW-NOW! - <a asp-area="" asp-controller="Booking" asp-action="Index">Book a table</a>

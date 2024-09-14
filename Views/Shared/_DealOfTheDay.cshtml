@@ -1,0 +1,21 @@
+﻿@* @using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model List<MealVM>
+ 
+class="crayon"
+*@
+ 
+<section >
+    <h3>DEAL OF THE DAY! </h3>
+    <h4>Trerätters för 199kr!</h4>
+    <ul>
+        @* @foreach (var meal in Model)
+        { *@
+            <li class="mb-3">
+                @* <h5 class="meal-name">@meal.Name.ToUpper()</h5> *@
+                <h5 class="meal-name">Förrät den här!</h5>
+                <h5 class="meal-name">Huvudrätt den här!</h5>
+                <h5 class="meal-name">O sen efterrätt.</h5>
+            </li>
+       @*  } *@
+    </ul>
+</section>

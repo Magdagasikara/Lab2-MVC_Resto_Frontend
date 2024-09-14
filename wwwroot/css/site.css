@@ -13,9 +13,29 @@ html {
     /*border-radius: 2%;*/
     border-style: outset;
 }
-.menu h2{
-    text-align:center;
-    margin: 3%;
+
+    .menu h2 {
+        text-align: center;
+        margin: 3%;
+    }
+
+.offcanvas-center {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90%;
+    overflow-y: auto;
+    background-color: #343a40;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+}
+
+.offcanvas-body {
+    padding: 1.5rem;
+    color: #fff; 
 }
 
 /*.hero {
@@ -27,6 +47,7 @@ html {
     html {
         font-size: 16px;
     }
+
     .col-md-6 {
         width: 40%;
         margin: 0 5%;
@@ -47,4 +68,11 @@ html {
 
 body {
     margin-bottom: 60px;
+}
+
+.crayon {
+    font-family: 'Crayon Pastel', sans-serif;
+    color: white !important;
+    background-color: black;
+    /*border-radius: 50% 50% 50% 0;*/
 }

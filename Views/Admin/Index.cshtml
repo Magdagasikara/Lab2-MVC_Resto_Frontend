@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Hi there Admin!";
+}
+
+<h2>Here you can administrate stuff:</h2>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" id="adminTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Menu</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tab2-tab" data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2" aria-selected="false">Bookings</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tab3-tab" data-bs-toggle="tab" href="#tab3" role="tab" aria-controls="tab3" aria-selected="false">Tables</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tab4-tab" data-bs-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Customers</a>
+    </li>
+</ul>
+
+<div class="tab-content" id="adminTabContent">
+    <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+        @await Html.PartialAsync("_AdminMenu")
+    </div>
+    <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+        @await Html.PartialAsync("_AdminBookings")
+    </div>
+    <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+        @await Html.PartialAsync("_AdminTables")
+    </div>
+    <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+        @await Html.PartialAsync("_AdminCustomers")
+    </div>
+</div>
