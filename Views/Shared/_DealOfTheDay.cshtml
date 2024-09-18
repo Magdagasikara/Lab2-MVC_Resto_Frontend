@@ -1,21 +1,60 @@
 ﻿@* @using Lab2_MVC_Resto_Frontend.Models.ViewModels
 @model List<MealVM>
- 
+
 class="crayon"
 *@
- 
-<section >
+<section class="crayon dealOfTheDay">
+</section>
+@* <section class="crayon">
     <h3>DEAL OF THE DAY! </h3>
     <h4>Trerätters för 199kr!</h4>
     <ul>
-        @* @foreach (var meal in Model)
-        { *@
-            <li class="mb-3">
-                @* <h5 class="meal-name">@meal.Name.ToUpper()</h5> *@
-                <h5 class="meal-name">Förrät den här!</h5>
-                <h5 class="meal-name">Huvudrätt den här!</h5>
-                <h5 class="meal-name">O sen efterrätt.</h5>
-            </li>
-       @*  } *@
+        <li class="mb-3">
+            <h5 class="meal-name">Förrät den här!</h5>
+            <h5 class="meal-name">Huvudrätt den här!</h5>
+            <h5 class="meal-name">O sen efterrätt.</h5>
+        </li>
     </ul>
 </section>
+ *@
+<script>
+    const url_deal = "https://localhost:7212/api/Menu";
+    let menu = [];
+
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch(url_deal)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Something went wrong. Please try again later.")
+                }
+                console.log(response.json);
+                return response.json()
+            })
+            .then((data) => {
+                menu = data;
+                console.log(menu);
+                renderDeal();
+            })
+            .catch((error) => { console.log(error) })
+    });
+
+    const renderDeal = () => {
+        const dealOfTheDay = document.querySelector(".dealOfTheDay");
+
+        let htmlContent = `
+                    <h3>DEAL OF THE DAY! </h3>
+                    <h4>Trerätters för 199kr!</h4>
+                    <ul>
+               `;
+        menu.map((meal, index) => {
+
+            htmlContent += '<li class="mb-3"><h5 class="meal-name">${meal.name}</h5></li>';
+        })
+        htmlContent += `
+                    </ul >
+                `;
+        console.log(htmlContent);
+        dealOfTheDay.innerHTML = htmlContent;
+    }
+
+</script>

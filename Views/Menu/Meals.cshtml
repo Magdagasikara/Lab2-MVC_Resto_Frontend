@@ -1,0 +1,54 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+
+@model List<MealDetailVM>
+@{
+    Layout = "_LayoutIFrame";
+    int counter = 0;
+}
+
+<a href="#">knapp Add a new meal</a>
+
+// doublecheck breakpoint specific responsiveness in bootstrap
+<div class="table-responsive">
+
+    <table class="table table-hover caption-top">
+
+        <caption>List of meals</caption>
+        <thead class="table-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Meal</th>
+                <th scope="col">Price</th>
+                <th scope="col">Available?</th>
+                <th scope="col">Description</th>
+                <th scope="col">Category</th>
+                <th scope="col">Edit or remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var meal in Model)
+            {
+                counter++;
+                <tr>
+                    <td>@counter</td>
+                    <td>@meal.Name</td>
+                    <td>@meal.Price</td>
+                    <td>
+                        <input type="checkbox" disabled="disabled" @(meal.IsAvailable ? "checked" : "") />
+                    </td>
+                    <td>@meal.Description</td>
+                    <td>@meal.MealCategoryName</td>
+                    <td>
+                        <a asp-controller="Menu" asp-action="EditMeal" asp-route-id=@meal.Id aria-label="Edit meal">
+                        @* <a href=@Url.Action("EditMeal","Menu",new { id = meal.Id }) aria-label="Edit"> *@
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a href=@Url.Action("RemoveMeal","Menu",new { id = meal.Id }) aria-label="Remove">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
