@@ -1,4 +1,6 @@
-﻿namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
 {
     public class MealVM
     {

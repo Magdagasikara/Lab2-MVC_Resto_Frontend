@@ -1,0 +1,83 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model MealAddVM
+@{
+    Layout = "_LayoutIFrame";
+}
+@{
+    if (ViewData["SuccessMessage"] != null)
+    {
+                <div class="alert alert-success">
+                    @ViewData["SuccessMessage"]
+                </div>
+    }
+    else if (ViewData["ErrorMessage"] != null)
+    {
+                <div class="alert alert-danger">
+                    @ViewData["ErrorMessage"]
+                </div>
+    }
+}
+
+<button type="button" id="button-add-meal">Add a new meal</button>
+
+<section id="form-add-meal" style="display:none">
+    @* flytta style härifrån när det funkar! *@
+    @* @Html.ActionLink("Add", "Menu", "AddMeal") *@
+    @using (Html.BeginForm(new { @class = "needs-validation row g-3", novalidate = "true" }))
+    {
+        @* Name *@
+        @Html.LabelFor(model => model.Name)
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+
+        @* Description *@
+        @Html.LabelFor(model => model.Description)
+        @Html.EditorFor(model => model.Description)
+        @Html.ValidationMessageFor(model => model.Description)
+
+        @* Price *@
+        @Html.LabelFor(model => model.Price)
+        @Html.EditorFor(model => model.Price)
+        @Html.ValidationMessageFor(model => model.Price)
+
+        @* IsAvailable *@
+        @Html.LabelFor(model => model.IsAvailable)
+        @Html.EditorFor(model => model.IsAvailable)
+        @Html.ValidationMessageFor(model => model.IsAvailable)
+
+        @* MealCategoryName *@
+        @Html.LabelFor(model => model.MealCategoryName)
+        @Html.EditorFor(model => model.MealCategoryName)
+        @Html.ValidationMessageFor(model => model.MealCategoryName)
+
+        @Html.ValidationSummary()
+
+        <button type="submit">Add</button>
+        <button type="button" id="buttonCancelAdd">Cancel</button>
+    }
+</section>
+
+
+<script>
+    const buttonAddMeal = document.getElementById("button-add-meal")
+    const formAddMeal = document.getElementById("form-add-meal")
+    const buttonCancelAdd = document.getElementById("buttonCancelAdd")
+
+    if (buttonAddMeal) {
+        buttonAddMeal.addEventListener("click",
+            (c) => {
+                buttonAddMeal.style.display = "none";
+                formAddMeal.style.display = "block";
+            });
+    }
+
+    if (buttonCancelAdd) {
+        buttonCancelAdd.addEventListener("click",
+            (c) => {
+                buttonAddMeal.style.display = "block";
+                formAddMeal.style.display = "none";
+            });
+    }
+
+
+</script>

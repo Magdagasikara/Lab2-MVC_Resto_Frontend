@@ -23,27 +23,17 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         public async Task<IActionResult> Index()
         {
             var response = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}menu");
-            //var options = new JsonSerializerOptions
-            //{
-            //    PropertyNameCaseInsensitive = true
-            //};
-
             var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response, _options);
             return View(menu);
         }
         public async Task<IActionResult> DealOfTheDay()
         {
             var response = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}menu");
-            //var options = new JsonSerializerOptions
-            //{
-            //    PropertyNameCaseInsensitive = true
-            //};
-
             var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response, _options);
             // Skicka med modellen till partial view - var det okej?
             // välj slumpmässigt en rätt från första tre kategorier
-            var meals = menu.Select(m => m.Meals).ToList();
-            return PartialView("_DealOfTheDay", meals);
+            //var meals = menu.Select(m => m.Meals).ToList();
+            return PartialView("_DealOfTheDay", menu);
         }
         // admin
         public ActionResult AddMealCategory()
@@ -73,7 +63,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddMeal(MealVM meal)
+        public async Task<IActionResult> AddMeal(MealAddVM meal)
         {
 
             if (!ModelState.IsValid)
@@ -83,9 +73,16 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             var json = JsonSerializer.Serialize(meal);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync($"{_baseUri}menu/meals/meal/add", content);
+            if (response.IsSuccessStatusCode)
+            {
+                ViewData["SuccessMessage"] = $"{meal.Name} successfully added!";
+            }
+            else
+            {
+                ViewData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
+            }
 
-            // kanske kolla status code, om 2xx då "success! wow!" etc
-            return RedirectToAction("Index");
+            return View();
         }
         // admin
         public async Task<IActionResult> MealCategories()
