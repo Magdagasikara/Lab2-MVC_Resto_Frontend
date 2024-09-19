@@ -1,22 +1,8 @@
-﻿@* @using Lab2_MVC_Resto_Frontend.Models.ViewModels
-@model List<MealVM>
+﻿<section 
+    class="crayon" 
+    id="dealOfTheDay">
+</section>
 
-class="crayon"
-*@
-<section class="crayon dealOfTheDay">
-</section>
-@* <section class="crayon">
-    <h3>DEAL OF THE DAY! </h3>
-    <h4>Trerätters för 199kr!</h4>
-    <ul>
-        <li class="mb-3">
-            <h5 class="meal-name">Förrät den här!</h5>
-            <h5 class="meal-name">Huvudrätt den här!</h5>
-            <h5 class="meal-name">O sen efterrätt.</h5>
-        </li>
-    </ul>
-</section>
- *@
 <script>
     const url_deal = "https://localhost:7212/api/Menu";
     let menu = [];
@@ -39,16 +25,30 @@ class="crayon"
     });
 
     const renderDeal = () => {
-        const dealOfTheDay = document.querySelector(".dealOfTheDay");
+        const dealOfTheDay = document.getElementById("dealOfTheDay");
 
         let htmlContent = `
                     <h3>DEAL OF THE DAY! </h3>
                     <h4>Trerätters för 199kr!</h4>
                     <ul>
                `;
-        menu.map((meal, index) => {
+        let categoryCounter = 0;
+        menu.map((category) => {
+            const meals = category.meals.length;
+            const chosenMeal = Math.floor(Math.random() * meals);
+            let mealCounter = 0;
 
-            htmlContent += '<li class="mb-3"><h5 class="meal-name">${meal.name}</h5></li>';
+            if (categoryCounter < 3) {
+                htmlContent += '<li class="mb-3"><h5 class="meal-name">';
+                category.meals.map((meal) => {
+                    if (mealCounter == chosenMeal) {
+                        htmlContent +=  meal.name;
+                    }
+                    mealCounter++;
+                })
+            htmlContent += '</h5></li>';
+            }
+            categoryCounter++;
         })
         htmlContent += `
                     </ul >
