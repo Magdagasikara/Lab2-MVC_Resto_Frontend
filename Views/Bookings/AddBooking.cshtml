@@ -1,0 +1,56 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model BookingAddVM
+@{
+    Layout = "_LayoutIFrame";
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @ViewData["ErrorMessage"]
+    </div>
+}
+
+<section id="form-add-booking">
+    @using (Html.BeginForm("AddBooking", "Bookings", FormMethod.Post, new { @class = "needs-validation row g-3", novalidate = "true" }))
+    {
+        @* Email *@
+        @Html.LabelFor(model => model.Email)
+        @Html.EditorFor(model => model.Email)
+        @Html.ValidationMessageFor(model => model.Email)
+
+        @* AmountOfGuests *@
+        @Html.LabelFor(model => model.AmountOfGuests)
+        @Html.EditorFor(model => model.AmountOfGuests)
+        @Html.ValidationMessageFor(model => model.AmountOfGuests)
+
+        @* ReservationStart *@
+        @Html.LabelFor(model => model.ReservationStart)
+        @* @Html.TextBoxFor(model => model.ReservationStart, "HH:mm", new { type = "time", @class = "form-control" }) *@
+        @Html.EditorFor(model => model.ReservationStart)
+        @Html.ValidationMessageFor(model => model.ReservationStart)
+        @* @Html.TextBoxFor(model => model.InvoiceDate, new { @type = "date", @Value = Model.InvoiceDate.Value.ToString("yyyy-MM-dd") }) *@
+
+        @* ReservationDurationInHours *@
+        @Html.LabelFor(model => model.ReservationDurationInHours)
+        @Html.EditorFor(model => model.ReservationDurationInHours)
+        @Html.ValidationMessageFor(model => model.ReservationDurationInHours)
+
+        @* TimeStamp *@
+        @* @Html.HiddenFor(model => model.TimeStamp, new{Value=DateTime.Now}) *@
+
+        @Html.ValidationSummary()
+
+        <button type="submit">Add</button>
+        <button type="button" id="buttonCancel">Cancel</button>
+    }
+</section>
+
+<script>
+    const buttonCancel = document.getElementById("buttonCancelAdd")
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
+            (c) => {
+                history.back(); //den backar dock bara till tex form med invalid om det var senast,kanske bättre med länk
+            });
+    }
+</script>

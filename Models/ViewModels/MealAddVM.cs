@@ -19,8 +19,7 @@ namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
         [Required]
         [DisplayName("Is available?")]
         public bool IsAvailable { get; set; }
-        // kan jag skicka en lista?
         [DisplayName("Meal category")]
-        public string? MealCategoryName { get; set; }
+        public int? FK_MealCategoryId { get; set; }
     }
 }

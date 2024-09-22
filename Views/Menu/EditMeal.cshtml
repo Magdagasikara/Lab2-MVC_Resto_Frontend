@@ -1,5 +1,6 @@
 ﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
-@model MealAddVM
+@model MealDetailVM
+
 @{
     Layout = "_LayoutIFrame";
 }
@@ -13,8 +14,11 @@
 <section id="form-add-meal">
     @* flytta style härifrån när det funkar! *@
     @* @Html.ActionLink("Add", "Menu", "AddMeal") *@
-    @using (Html.BeginForm(new { @class = "needs-validation row g-3", novalidate = "true" }))
+    @using (Html.BeginForm("EditMeal", "Menu", FormMethod.Post, new { @class = "needs-validation row g-3", novalidate = "true" }))
     {
+        @* Id *@
+        @Html.HiddenFor(model => model.Id)
+
         @* Name *@
         @Html.LabelFor(model => model.Name)
         @Html.EditorFor(model => model.Name)
@@ -26,6 +30,7 @@
         @Html.ValidationMessageFor(model => model.Description)
 
         @* Price *@
+
         @Html.LabelFor(model => model.Price)
         @Html.EditorFor(model => model.Price)
         @Html.ValidationMessageFor(model => model.Price)
@@ -39,51 +44,19 @@
         @Html.LabelFor(model => model.FK_MealCategoryId)
         @Html.DropDownListFor(model => model.FK_MealCategoryId, (SelectList)ViewBag.Categories)
 
-        @* @Html.ValidationSummary() *@
+        @Html.ValidationSummary() 
 
-        <button type="submit">Add</button>
+        <button type="submit">Save changes</button>
         <button type="button" id="buttonCancelAdd">Cancel</button>
     }
 </section>
 
-
 <script>
-    const buttonAddMeal = document.getElementById("button-add-meal")
-    const formAddMeal = document.getElementById("form-add-meal")
-    const buttonCancelAdd = document.getElementById("buttonCancelAdd")
-    const form = document.querySelector("form")
-
-    // if (buttonAddMeal) {
-    //     buttonAddMeal.addEventListener("click",
-    //         (c) => {
-    //             buttonAddMeal.style.display = "none";
-    //             formAddMeal.style.display = "block";
-    //             ViewData["SuccessMessage"] = null;
-    //             ViewData["ErrorMessage"] = null;
-    //         });
-    // }
-
-    // if (buttonCancelAdd) {
-    //     buttonCancelAdd.addEventListener("click",
-    //         (c) => {
-    //             buttonAddMeal.style.display = "block";
-    //             formAddMeal.style.display = "none";
-    //         });
-    // }
-    if (buttonCancelAdd) {
-        buttonCancelAdd.addEventListener("click",
+    const buttonCancel = document.getElementById("buttonCancelAdd")
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
             (c) => {
                 history.back(); //den backar dock bara till tex form med invalid om det var senast,kanske bättre med länk
             });
     }
-
-    // om jag gör om, det ska refresha listan av meals
-    // form.addEventListener("submit",
-    //     (s) => {
-    //         if (form.checkValidity()) {
-    //             form.reset();
-    //         }
-    //     }
-    // )
-
 </script>

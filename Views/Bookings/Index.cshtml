@@ -1,0 +1,120 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@{
+    Layout = "_LayoutIFrame";
+}
+@* idea from www.crezzur.com then a lot of help by Chat GPT *@
+@model ScheduleVM
+
+<section id="booking-add">
+    @{
+        if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+            TempData["SuccessMessage"] = null;
+        }
+        else if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+            TempData["ErrorMessage"] = null;
+        }
+    }
+    <a asp-controller="Bookings" asp-action="AddBooking" class="btn btn-primary">
+        Add a new reservation
+    </a>
+</section>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered">
+        <caption>List of current reservations</caption>
+        <thead>
+            <tr>
+                <th>Table</th>
+                @for (var time = Model.StartDate; time <= Model.EndDate; time = time.AddMinutes(30))
+                {
+                    <th>@time.ToString("dd/MM/yyyy HH:mm")</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var table in Model.Tables)
+            {
+                <tr>
+                    <td>Table @table.TableNumber</td>
+                    @{
+                        var currentTime = Model.StartDate;
+                    }
+                    @while (currentTime <= Model.EndDate)
+                    {
+                        var booking = table.Bookings.SingleOrDefault(b => b.ReservationStart <= currentTime && b.ReservationEnd >= currentTime);
+
+                        if (booking != null)
+                        {
+                            // Räkna antal kolumner som bokningen ska sträcka sig över (i halvtimmar)
+                            var durationInMinutes = (booking.ReservationEnd - booking.ReservationStart).TotalMinutes;
+                            var colspan = (int)(durationInMinutes / 30); // Antal halvtimmar
+
+                            // Skriv ut en enda cell med colspan som täcker hela bokningens varaktighet
+                            <td colspan="@colspan">
+                                <div class="booking">
+                                    <div class="booking-details">
+                                        <h3>@booking.Email</h3>
+                                        <span>@booking.BookingNumber</span>
+                                        <div>Guests: @booking.AmountOfGuests</div>
+                                        <div>Time: @booking.ReservationStart.ToString("HH:mm") - @booking.ReservationEnd.ToString("HH:mm")</div>
+                                    </div>
+                                    <div class="icons">
+                                        <a asp-controller="Bookings" asp-action="EditBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Edit booking">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <a href=@Url.Action("RemoveBooking","Bookings",new { BookingNumber= booking.BookingNumber }) aria-label="Remove booking">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+
+                            // Set current time to the reservation end time, rounded to half'n'hour
+                            currentTime = booking.ReservationEnd.Date.AddMinutes(Math.Round(booking.ReservationEnd.TimeOfDay.TotalMinutes / 30) * 30);
+                        }
+                        else
+                        {
+                            <td></td>
+                            currentTime = currentTime.AddMinutes(30); 
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+    // When admin opens the window, the current time should be visible first (i.e. scroll to the current half n hour)
+
+    // OBS! varför laddas det redan när admin är på menyn
+
+    window.addEventListener('load', function () {
+        // Hitta den första kolumnen och dess bredd
+        const table = document.querySelector('.table-responsive');
+        const currentTime = new Date();
+        const startTime = new Date('@Model.StartDate');
+
+        // Beräkna hur många halvtimmar vi behöver scrolla
+        const diffInMinutes = (currentTime - startTime) / (1000 * 60); // Skillnad i minuter
+        const diffInHalfHours = Math.floor(diffInMinutes / 30); // Antal halvtimmar
+
+        // Varje kolumn är en halvtimme, så scrolla till rätt kolumn
+        const columnWidth = document.querySelector('th').offsetWidth; // Bredden på en kolumn
+        const scrollPosition = diffInHalfHours * columnWidth; // Hur långt vi ska scrolla
+        console.log("är här")
+        // Scrolla till den positionen
+        table.scrollLeft = scrollPosition;
+    });
+
+
+</script>

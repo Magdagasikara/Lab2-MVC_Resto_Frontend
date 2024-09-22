@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @* <link rel="stylesheet" href="~/Lab2_MVC_Resto_Frontend.styles.css" asp-append-version="true" /> *@
-    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/pastel-crayon"/>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/pastel-crayon" />
 </head>
 <body>
     <header>
@@ -20,16 +20,33 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (User.IsInRole("Admin"))
+                        @*@if (User.IsInRole("Admin"))
                         {
-                            @* @await Html.PartialAsync("_MenuAdmin") *@
                             <partial name="_MenuAdmin" />
                         }
                         else
                         {
-                            @* @await Html.PartialAsync("_MenuVisitor") *@
                             <partial name="_MenuVisitor" />
-                        }
+                        }*@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">MENU</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Index">Book a table</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">No privacy (everything about us)</a>
+                        </li>
+                        @*     <a class="nav-link crayon" asp-area="" asp-controller="Home" asp-action="Privacy">Deal of the day!</a> *@
+                        <a class="nav-link crayon" data-bs-toggle="offcanvas" href="#offcanvasDeal" role="button" aria-controls="offcanvasDeal">
+                            Deal of the day!
+                        </a>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin stuff</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -38,7 +55,7 @@
     <div class="container>
 
         <main role="main" class="pb-3">
-            @RenderBody()
+        @RenderBody()
         </main>
     </div>
     @* det ska komma nån annanstans????.....*@

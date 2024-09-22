@@ -1,0 +1,22 @@
+﻿@model int
+@{
+    Layout = "_LayoutIFrame";
+}
+<form method="post" asp-action="RemoveMealConfirm" asp-route-mealId="@(Model)" class="display:inline">
+    <h2>
+        Are you sure you want to delete this meal?
+    </h2>
+    <button type="submit" class="btn btn-danger">YES!</button>
+    <button type="button" id="buttonCancel">No</button>
+</form>
+
+<script>
+    // button cancel kan flyttas till separat script o funka på olika ställen
+    const buttonCancel = document.getElementById("buttonCancel")
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
+            (c) => {
+                history.back();
+            })
+    }
+</script>

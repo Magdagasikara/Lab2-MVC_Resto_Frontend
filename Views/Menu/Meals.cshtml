@@ -7,11 +7,28 @@
 }
 
 <section id="meal-add">
-    <iframe class="embed-responsive-item" src="@Url.Action("AddMeal", "Menu")">
-    </iframe>
+    @{
+        if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+            TempData["SuccessMessage"] = null;
+        }
+        else if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["ErrorMessage"]
+            </div>
+            TempData["ErrorMessage"] = null;
+        }
+    }
+    <a asp-controller="Menu" asp-action="AddMeal" class="btn btn-primary">
+        Add a new meal
+    </a>
 </section>
 
-// doublecheck breakpoint specific responsiveness in bootstrap
+
 <section class="table-responsive">
 
     <table class="table table-hover caption-top">
@@ -42,10 +59,10 @@
                     <td>@meal.Description</td>
                     <td>@meal.MealCategoryName</td>
                     <td>
-                        <a asp-controller="Menu" asp-action="EditMeal" asp-route-id=@meal.Id aria-label="Edit meal">
+                        <a asp-controller="Menu" asp-action="EditMeal" asp-route-mealId=@meal.Id aria-label="Edit meal">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a href=@Url.Action("RemoveMeal","Menu",new { id = meal.Id }) aria-label="Remove">
+                        <a href=@Url.Action("RemoveMeal","Menu",new { mealId = meal.Id }) aria-label="Remove meal">
                             <i class="fa-solid fa-trash-can"></i>
                         </a>
                     </td>
@@ -55,9 +72,11 @@
     </table>
 </section>
 
-<script>
+@* <script>
+// fixa sortering!
     // när sida laddas spara data i en Js-variabel
     // add event listener on click på kolumner
+
 
     // skriva ut ny tabell
     let counter = 0;
@@ -67,22 +86,22 @@
         counter++;
         const mealHtml = ' <tr>
             < td > counter</td>
-                    <td>meal.Name</td>
-                <td>meal.Price</td>
-                    <td>
-                    <input type="checkbox" disabled="disabled" meal.IsAvailable ? "checked" : "") />
-                    </td>
-                <td>meal.Description</td>
-                <td>meal.MealCategoryName</td>
-                    <td>
-                    <a asp-controller="Menu" asp-action="EditMeal" asp-route-id={meal.Id} aria-label="Edit meal">
-                        <i class="fa-solid fa-pen-to-square"></i>
+                        <td>meal.Name</td>
+                    <td>meal.Price</td>
+                        <td>
+                        <input type="checkbox" disabled="disabled" meal.IsAvailable ? "checked" : "") />
+                        </td>
+                    <td>meal.Description</td>
+                    <td>meal.MealCategoryName</td>
+                        <td>
+                        <a asp-controller="Menu" asp-action="EditMeal" asp-route-id={meal.Id} aria-label="Edit meal">
+                            edit<i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-controller="Menu" asp-action="RemoveMeal" asp-route-id={meal.Id} aria-label="Remove meal">
+                            remove<i class="fa-solid fa-trash-can"></i>
                     </a>
-                    <a asp-controller="Menu" asp-action="RemoveMeal" asp-route-id={meal.Id} aria-label="Remove meal">
-                    <i class="fa-solid fa-trash-can"></i>
-                </a>
-                 </td >
-            </tr > ';
+                     </td >
+                </tr > ';
         tableBody.innerHTML += mealHtml;
     })
-</script>
+</script> *@

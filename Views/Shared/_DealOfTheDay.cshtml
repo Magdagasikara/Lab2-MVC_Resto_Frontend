@@ -12,12 +12,10 @@
                 if (!response.ok) {
                     throw new Error("Error from API")
                 }
-                //console.log(response.json);
                 return response.json()
             })
             .then((data) => {
                 menu = data;
-                //console.log(menu);
                 renderDeal();
             })
             .catch((error) => {
@@ -54,7 +52,6 @@
         htmlContent += `
                         </ul >
                     `;
-        console.log(htmlContent);
         dealOfTheDay.innerHTML = htmlContent;
     }
 
