@@ -15,7 +15,7 @@ namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
         public string Description { get; set; }
         [Required]
         [Range(25, 2000, ErrorMessage = "Enter a reasonable price in SEK (between 25 and 2000 kr)")]
-        public decimal Price { get; set; }
+        public int Price { get; set; }
         [Required]
         [DisplayName("Is available?")]
         public bool IsAvailable { get; set; }

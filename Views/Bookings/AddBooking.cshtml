@@ -35,8 +35,7 @@
         @Html.EditorFor(model => model.ReservationDurationInHours)
         @Html.ValidationMessageFor(model => model.ReservationDurationInHours)
 
-        @* TimeStamp *@
-        @* @Html.HiddenFor(model => model.TimeStamp, new{Value=DateTime.Now}) *@
+        @* TimeStamp is set in the controller *@
 
         @Html.ValidationSummary()
 
@@ -46,7 +45,7 @@
 </section>
 
 <script>
-    const buttonCancel = document.getElementById("buttonCancelAdd")
+    const buttonCancel = document.getElementById("buttonCancel")
     if (buttonCancel) {
         buttonCancel.addEventListener("click",
             (c) => {

@@ -74,9 +74,11 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             {
                 return View(booking);
             }
+            booking.TimeStamp= DateTime.Now;
+
             var json = JsonSerializer.Serialize(booking);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{_baseUri}menu/bookings/booking/add", content);
+            var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}bookings/booking/add", content);
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = $"Reservation for {booking.AmountOfGuests} on {booking.ReservationStart} successfully created. We sent a confirmation mail to {booking.Email}.";

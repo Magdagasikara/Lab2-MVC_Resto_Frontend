@@ -6,7 +6,7 @@ namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
+        public int Price { get; set; }
 
     }
 }

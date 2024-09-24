@@ -13,7 +13,7 @@
 <section id="form-add-meal">
     @* flytta style härifrån när det funkar! *@
     @* @Html.ActionLink("Add", "Menu", "AddMeal") *@
-    @using (Html.BeginForm(new { @class = "needs-validation row g-3", novalidate = "true" }))
+    @using (Html.BeginForm("AddMeal", "Menu", FormMethod.Post, new { @class = "needs-validation row g-3", novalidate = "true" }))
     {
         @* Name *@
         @Html.LabelFor(model => model.Name)
@@ -42,7 +42,7 @@
         @* @Html.ValidationSummary() *@
 
         <button type="submit">Add</button>
-        <button type="button" id="buttonCancelAdd">Cancel</button>
+        <button type="button" id="buttonCancel">Cancel</button>
     }
 </section>
 
@@ -53,37 +53,11 @@
     const buttonCancelAdd = document.getElementById("buttonCancelAdd")
     const form = document.querySelector("form")
 
-    // if (buttonAddMeal) {
-    //     buttonAddMeal.addEventListener("click",
-    //         (c) => {
-    //             buttonAddMeal.style.display = "none";
-    //             formAddMeal.style.display = "block";
-    //             ViewData["SuccessMessage"] = null;
-    //             ViewData["ErrorMessage"] = null;
-    //         });
-    // }
-
-    // if (buttonCancelAdd) {
-    //     buttonCancelAdd.addEventListener("click",
-    //         (c) => {
-    //             buttonAddMeal.style.display = "block";
-    //             formAddMeal.style.display = "none";
-    //         });
-    // }
-    if (buttonCancelAdd) {
-        buttonCancelAdd.addEventListener("click",
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
             (c) => {
                 history.back(); //den backar dock bara till tex form med invalid om det var senast,kanske bättre med länk
             });
     }
-
-    // om jag gör om, det ska refresha listan av meals
-    // form.addEventListener("submit",
-    //     (s) => {
-    //         if (form.checkValidity()) {
-    //             form.reset();
-    //         }
-    //     }
-    // )
 
 </script>

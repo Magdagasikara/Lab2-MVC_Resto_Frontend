@@ -18,9 +18,9 @@ namespace Lab2_MVC_Resto_Frontend.Models.ViewModels
         [DisplayName("Reservation start")]
         public DateTime ReservationStart { get; set; }
         [Required]
-        [DisplayName("Reservation time")]
+        [DisplayName("Reservation time in hours")]
         [Range(1, 10, ErrorMessage = "Reservation time must be minimum 1 hour")]
-        public int ReservationDurationInHours { get; set; }
+        public double ReservationDurationInHours { get; set; }
         [Required]
         public DateTime TimeStamp { get; set; }
 

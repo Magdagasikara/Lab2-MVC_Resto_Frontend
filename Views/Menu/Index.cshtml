@@ -1,8 +1,6 @@
 ﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
 @model List<MealCategoryWithMealsVM>
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+
 @{
     int totalMeals = @Model.SelectMany(m => m.Meals).Count();
     int mealCount = 1;
@@ -60,7 +58,6 @@
                                 </div>
                             }
                             mealCount++;
-                            // kontrollera om det slutar mitt eller efter en kategori
                         }
                     }
                 }
