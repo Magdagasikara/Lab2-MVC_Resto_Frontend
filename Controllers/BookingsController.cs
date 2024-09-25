@@ -28,7 +28,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             var bookings = JsonSerializer.Deserialize<IEnumerable<BookingWithTablesEndTimeDto>>(responseBookings, _options);
 
             // Show bookings from now and one week ahead
-            var startDate = DateTime.Today;
+            var startDate = DateTime.Today.AddMinutes(Math.Ceiling((DateTime.Now - DateTime.Today).TotalMinutes/30)*30-60);
             var endDate = DateTime.Today.AddDays(7);
 
             // Get restaurant's tables from API
@@ -38,7 +38,11 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             foreach (var table in tables)
             {
                 table.Bookings = bookings
-                        .Where(b => b.Tables != null && b.Tables.Any(t => t.TableNumber == table.TableNumber))
+                        .Where(b => 
+                            b.Tables != null 
+                            && b.Tables.Any(t => t.TableNumber == table.TableNumber)
+                            && b.ReservationStart >= DateTime.Today
+                            )
                         .Select(b => new BookingVM
                         {
                             BookingNumber = b.BookingNumber,
@@ -65,7 +69,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> AddBooking(BookingAddVM booking)
         {
@@ -74,7 +78,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             {
                 return View(booking);
             }
-            booking.TimeStamp= DateTime.Now;
+            booking.TimeStamp = DateTime.Now;
 
             var json = JsonSerializer.Serialize(booking);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -100,13 +104,31 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         // admin
         public async Task<IActionResult> UpdateBooking()
         {
+           
             return View();
         }
         // admin
-        public async Task<IActionResult> DeleteBooking()
+        public async Task<IActionResult> RemoveBooking(string bookingNumber)
         {
-            return View();
+            var response = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}bookings/booking/{bookingNumber}/simple");
+            var booking = JsonSerializer.Deserialize<BookingVM>(response, _options);
+            
+            return View(booking);
         }
-
+        [HttpPost]
+        public async Task<IActionResult> RemoveBookingConfirmed(string bookingNumber)
+        {
+            var response = await _httpClient.DeleteAsync($"{_httpClient.BaseAddress}bookings/booking/{bookingNumber}/delete");
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = $"Booking nr {bookingNumber} successfully deleted!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

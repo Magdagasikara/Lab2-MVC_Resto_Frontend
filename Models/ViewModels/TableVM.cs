@@ -3,6 +3,7 @@
     public class TableVM
     {
         public int TableNumber { get; set; }
+        public int AmountOfPlaces { get; set; }
         public List<BookingVM> Bookings { get; set; }
     }
 }

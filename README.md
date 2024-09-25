@@ -13,6 +13,7 @@ todo
 - kanske så för att skicka namnet att radera. https://stackoverflow.com/questions/61672262/how-to-pass-an-object-to-an-action-method-in-asp-net-core-mvc
 - ännnu bättre så https://stackoverflow.com/questions/62950905/net-mvc-how-in-a-url-action-to-send-an-object-in-an-object
 - om jag läste igenom o kunde lab 2 först skulle jag inte jobba med reservation duration
+- admin sida med bokningar per table: visa antalet platser per table
 
 är det no no att skriva texter i vyn? varför skickar vi titel från controllern?
 

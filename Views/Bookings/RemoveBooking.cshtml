@@ -1,0 +1,22 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model BookingVM
+@{
+    Layout = "_LayoutIFrame";
+}
+<form method="post" asp-action="RemoveBookingConfirmed" asp-route-bookingNumber=@Model.BookingNumber class="display:inline">
+    <h2>
+        Are you sure you want to delete booking for @Model.AmountOfGuests guests on the @Model.ReservationStart?
+    </h2>
+    <button type="submit" class="btn btn-danger">YES!</button>
+    <button type="button" id="buttonCancel">No</button>
+</form>
+
+<script>
+    const buttonCancel = document.getElementById("buttonCancel")
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
+            (c) => {
+                history.back();
+            })
+    }
+</script>

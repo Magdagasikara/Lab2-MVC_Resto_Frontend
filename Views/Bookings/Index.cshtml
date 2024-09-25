@@ -43,7 +43,7 @@
             @foreach (var table in Model.Tables)
             {
                 <tr>
-                    <td>Table @table.TableNumber</td>
+                    <td>Table @table.TableNumber<br> (@table.AmountOfPlaces places)</td>
                     @{
                         var currentTime = Model.StartDate;
                     }
@@ -52,15 +52,18 @@
                         var booking = table.Bookings
                             .SingleOrDefault(b => 
                                 b.ReservationStart <= currentTime && 
-                                b.ReservationEnd >= currentTime);
+                                b.ReservationEnd > currentTime);
 
                         if (booking != null)
                         {
-                            // Räkna antal kolumner som bokningen ska sträcka sig över (i halvtimmar)
-                            var durationInMinutes = (booking.ReservationEnd - booking.ReservationStart).TotalMinutes;
+                            // Count amount of 30min-intervals for each booking to be displayed on
+                            // Reservations are being found only once in the logic and should be displayed until the ReservationEnd
+                            // "currentTime" is used below instead of ReservationStart so that I can show reservations 
+                            // that started earlier than shown in the schedule and still with correct ReservationEnd
+                            var durationInMinutes = (booking.ReservationEnd - currentTime).TotalMinutes;
                             var colspan = (int)(durationInMinutes / 30); // Antal halvtimmar
 
-                            // Skriv ut en enda cell med colspan som täcker hela bokningens varaktighet
+                            // One cell for the whole booking
                             <td colspan="@colspan">
                                 <div class="booking">
                                     <div class="booking-details">
@@ -73,7 +76,7 @@
                                         <a asp-controller="Bookings" asp-action="EditBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Edit booking">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <a href=@Url.Action("RemoveBooking","Bookings",new { BookingNumber= booking.BookingNumber }) aria-label="Remove booking">
+                                        <a href=@Url.Action("RemoveBooking","Bookings",new { bookingNumber= booking.BookingNumber }) aria-label="Remove booking">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </a>
                                     </div>
