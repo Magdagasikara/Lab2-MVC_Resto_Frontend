@@ -64,6 +64,11 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
 
             return View(schedule);
         }
+
+        public async Task<IActionResult> BookATable()
+        {
+            return View();
+        }
         // admin
         public async Task<IActionResult> AddBooking()
         {

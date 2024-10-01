@@ -1,4 +1,4 @@
-﻿/*from https://codepen.io/crezzur/pen/JjXjojR*/
+﻿from https://codepen.io/crezzur/pen/JjXjojR
 .opt-tools {
     height: 100%;
     width: 25px;
@@ -41,7 +41,7 @@
         background-color: #cc0000;
     }
 
-/* LOCK HEADER AND FIRST COLUMN */
+ LOCK HEADER AND FIRST COLUMN 
 .table td,
 .table th {
     padding: 5px !important;
@@ -64,7 +64,7 @@ thead th {
     top: 0;
     z-index: 1020;
 }
-/* ---------- END (LOCK HEADER AND FIRST COLUMN ) --------- */
+ ---------- END (LOCK HEADER AND FIRST COLUMN ) --------- 
 
 .datetimepicker {
     width: 70% !important;
@@ -179,7 +179,7 @@ thead th {
     font-size: 11px;
 }
 
-/* USER TASKS */
+ USER TASKS 
 .details {
     border-radius: 4px;
     background: #fff;

@@ -1,0 +1,17 @@
+﻿@section metadata {
+    <meta name="description" content="Customers' view to book a table at the WOW, come NOW! bistro.">
+}
+
+<div class="embed-responsive embed-responsive-16by9">
+    <iframe src="http://localhost:5173/" id="dynamicIframe" class="embed-responsive-item" style="width: 100%; height: auto;" frameborder="0"></iframe>
+</div>
+
+<script>
+    // automatically adjust the window size
+    window.addEventListener('message', function (event) {
+        if (event.data && event.data.height) {
+            var iframe = document.getElementById('dynamicIframe');
+            iframe.style.height = event.data.height + 'px'; 
+        }
+    });
+</script>

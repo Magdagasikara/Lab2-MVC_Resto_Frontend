@@ -23,25 +23,10 @@ html {
     height: auto;
 }
 
-.offcanvas-center {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 500px;
-    max-height: 90%;
-    overflow-y: auto;
-    background-color: #343a40;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+/*do i really want that...*/
+.container  {
+    max-width: 100% !important;
 }
-
-.offcanvas-body {
-    padding: 1.5rem;
-    color: #fff;
-}
-
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
@@ -59,10 +44,17 @@ body {
 .crayon {
     font-family: 'Crayon Pastel', sans-serif;
     color: white !important;
-    background-color: black;
-    /*border-radius: 50% 50% 50% 0;*/
+    background-image: url("/images/background-blackboard.jpg");
 }
 
+/*.table td, .table th {
+    padding: 5px;*/ /* Minska padding mellan cellerna */
+/*}
+.table-head-description {
+    max-width: 200px;*/ /* Begränsa bredden för beskrivningskolumnen */
+   /* white-space: normal;*/ /* Tillåt radbrytning inom beskrivningskolumnen */
+    /*overflow: hidden;
+}*/
 .booking {
     display: flex;
     flex-direction: row;
@@ -86,19 +78,44 @@ body {
     flex-direction: column;
     justify-content: start;
 }
+.iframe-container {
+    width: 100%;
+}
+#form-add-meal{
+    margin: 0 5px;
+   max-width:100%;
+}
 
 @media (min-width: 768px) {
     html {
         font-size: 16px;
     }
+    iframe main {
+        max-width: 80%;
+    }
 
     .col-md-6 {
         width: 40%;
         margin: 0 5%;
+        align-content:center;
     }
 
     .hero {
         max-width: 60%;
         height: auto;
     }
+}
+/*@media (min-width: 1600px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1500px;
+    }
+}
+@media (min-width: 1800px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1700px;
+    }
+}*/
+.embed-responsive-item {
+    width: 100%;
+    height: auto; /* Dynamiskt kontrollerad */
 }

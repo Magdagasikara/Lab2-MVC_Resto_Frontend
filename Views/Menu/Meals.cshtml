@@ -1,4 +1,7 @@
 ﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@section metadata {
+    <meta name="description" content="Admin's subpage with a list of all meals.">
+}
 
 @model List<MealDetailVM>
 @{
@@ -40,7 +43,7 @@
                 <th scope="col" id="table-head-meal">Meal <i class="fa-solid fa-sort"></i></th>
                 <th scope="col" id="table-head-price">Price <i class="fa-solid fa-sort"></i></th>
                 <th scope="col" id="table-head-available">Available? <i class="fa-solid fa-sort"></i></th>
-                <th scope="col">Description</th>
+                <th scope="col" class="table-head-description">Description</th>
                 <th scope="col" id="table-head-category">Category <i class="fa-solid fa-sort"></i></th>
                 <th scope="col">Edit or remove</th>
             </tr>
@@ -56,7 +59,7 @@
                     <td>
                         <input type="checkbox" disabled="disabled" @(meal.IsAvailable ? "checked" : "") />
                     </td>
-                    <td>@meal.Description</td>
+                    <td class="table-head-description">@meal.Description</td>
                     <td>@meal.MealCategoryName</td>
                     <td>
                         <a asp-controller="Menu" asp-action="EditMeal" asp-route-mealId=@meal.Id aria-label="Edit meal">

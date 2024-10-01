@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @RenderSection("metadata")
     <title>@ViewData["Title"] - Lab2_MVC_Resto_Frontend</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -22,11 +23,11 @@
                     <ul class="navbar-nav flex-grow-1">
                         @*@if (User.IsInRole("Admin"))
                         {
-                            <partial name="_MenuAdmin" />
+                        <partial name="_MenuAdmin" />
                         }
                         else
                         {
-                            <partial name="_MenuVisitor" />
+                        <partial name="_MenuVisitor" />
                         }*@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -35,13 +36,12 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Menu" asp-action="Index">MENU</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="Index">Book a table</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="BookATable">Book a table</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">No privacy (everything about us)</a>
                         </li>
-                        @*     <a class="nav-link crayon" asp-area="" asp-controller="Home" asp-action="Privacy">Deal of the day!</a> *@
-                        <a class="nav-link crayon" data-bs-toggle="offcanvas" href="#offcanvasDeal" role="button" aria-controls="offcanvasDeal">
+                        <a class="nav-link crayon" data-bs-toggle="modal" data-bs-target="#dealOfTheDayModal" role="button">
                             Deal of the day!
                         </a>
                         <li class="nav-item">
@@ -52,26 +52,32 @@
             </div>
         </nav>
     </header>
-    <div class="container>
+    <div class="container">
 
         <main role="main" class="pb-3">
-        @RenderBody()
+            @RenderBody()
         </main>
     </div>
-    @* det ska komma nån annanstans????.....*@
-    <div class="offcanvas offcanvas-center offcanvas-dark" tabindex="-1" id="offcanvasDeal" aria-labelledby="offcanvasDealLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasDealLabel">Deal of the Day</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body" id="offcanvasContent">
-            <!-- Dynamiskt innehåll -->
-            <partial name="_DealOfTheDay" />
+    @* modal för Deal of the day *@
+    <div class="modal fade" id="dealOfTheDayModal" tabindex="-1" aria-labelledby="dealOfTheDayLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content crayon">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalDeal">Deal of the day!</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="_DealOfTheDay" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - Magda for WOW-NOW! - <a asp-area="" asp-controller="Booking" asp-action="Index">Book a table</a>
+            &copy; 2024 - Magda for WOW-NOW! - <a asp-area="" asp-controller="Bookings" asp-action="BookATable">Book a table</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

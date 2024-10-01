@@ -2,6 +2,9 @@
 @{
     Layout = "_LayoutIFrame";
 }
+@section metadata {
+    <meta name="description" content="Admin's subpage for administration of bookings.">
+}
 @* idea from https://codepen.io/crezzur/pen/JjXjojR then a lot of help by Chat GPT *@
 @model ScheduleVM
 
@@ -28,7 +31,7 @@
 </section>
 
 <div class="table-responsive">
-    <table class="table table-striped table-bordered caption-top">
+    <table class="table table-striped table-hover table-bordered caption-top">
         <caption>List of current reservations</caption>
         <thead>
             <tr>
@@ -102,25 +105,23 @@
 
     // When admin opens the window, the current time should be visible first (i.e. scroll to the current half n hour)
 
-    // OBS! varför laddas det redan när admin är på menyn
+    // window.addEventListener('load', function () {
+    //     // Hitta den första kolumnen och dess bredd
+    //     const table = document.querySelector('.table-responsive');
+    //     const currentTime = new Date();
+    //     const startTime = new Date('@Model.StartDate');
 
-    window.addEventListener('load', function () {
-        // Hitta den första kolumnen och dess bredd
-        const table = document.querySelector('.table-responsive');
-        const currentTime = new Date();
-        const startTime = new Date('@Model.StartDate');
+    //     // Beräkna hur många halvtimmar vi behöver scrolla
+    //     const diffInMinutes = (currentTime - startTime) / (1000 * 60); // Skillnad i minuter
+    //     const diffInHalfHours = Math.floor(diffInMinutes / 30); // Antal halvtimmar
 
-        // Beräkna hur många halvtimmar vi behöver scrolla
-        const diffInMinutes = (currentTime - startTime) / (1000 * 60); // Skillnad i minuter
-        const diffInHalfHours = Math.floor(diffInMinutes / 30); // Antal halvtimmar
-
-        // Varje kolumn är en halvtimme, så scrolla till rätt kolumn
-        const columnWidth = document.querySelector('th').offsetWidth; // Bredden på en kolumn
-        const scrollPosition = diffInHalfHours * columnWidth; // Hur långt vi ska scrolla
-        console.log("är här")
-        // Scrolla till den positionen
-        table.scrollLeft = scrollPosition;
-    });
+    //     // Varje kolumn är en halvtimme, så scrolla till rätt kolumn
+    //     const columnWidth = document.querySelector('th').offsetWidth; // Bredden på en kolumn
+    //     const scrollPosition = diffInHalfHours * columnWidth; // Hur långt vi ska scrolla
+    //     console.log("är här")
+    //     // Scrolla till den positionen
+    //     table.scrollLeft = scrollPosition;
+    // });
 
 
 </script>

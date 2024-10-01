@@ -1,10 +1,13 @@
 ﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
 @model List<MealCategoryWithMealsVM>
+@section metadata {
+    <meta name="description" content="Restaurant's menu divided into categories. List includes only available meals.">
+}
 
 @{
     int totalMeals = @Model.SelectMany(m => m.Meals).Count();
     int mealCount = 1;
-    int columnsBreakpoint = totalMeals / 2;
+    int columnsBreakpoint = (int)Math.Ceiling((double)totalMeals / 2);
     <div class="container menu">
         <div class="row">
             <h2> MENU</h2>
