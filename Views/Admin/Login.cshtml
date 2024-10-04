@@ -1,0 +1,16 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model LoginVM
+@section metadata {
+    <meta name="description" content="Admin's logging page">
+}
+
+<form asp-action="Login" method="post">
+    
+    <label asp-for="Email">Email</label>
+    <input asp-for="Email" />
+
+    <label asp-for="Password">Password</label>
+    <input asp-for="Password" type="password"/>
+
+    <button type="submit" class="btn btn-secondary">Login</button>
+</form>

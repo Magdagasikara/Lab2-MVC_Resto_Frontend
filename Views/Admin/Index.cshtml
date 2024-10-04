@@ -1,10 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Hi there Admin!";
+    var name = User.FindFirst("unique_name")?.Value;
+    if (name == null) name = "there";
+    ViewData["Title"] = $"Hi {name}!";
+    var email = User.FindFirst("Email")?.Value;
+    var logoutText = email == null ? "Logout" : $"Logout from {email}!";
 }
 @section metadata {
     <meta name="description" content="Admin's landing page for administration of menu (meals), reservations, tables and customers.">
 }
 
+<h2>@ViewData["Title"]</h2>
 <h2>Here you can administer stuff:</h2>
 
 <!-- Nav tabs -->
@@ -20,6 +25,11 @@
     </li>
     <li class="nav-item" role="presentation">
         <a class="nav-link" id="tab4-tab" data-bs-toggle="tab" href="#tab4" role="tab" aria-controls="tab4" aria-selected="false">Customers</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <form asp-action="Logout" method="post">
+            <button type="submit" class="Secondary">@logoutText</button>
+        </form>
     </li>
 </ul>
 

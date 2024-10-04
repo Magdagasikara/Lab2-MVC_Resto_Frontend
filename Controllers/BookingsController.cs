@@ -1,8 +1,10 @@
 ﻿using Lab2_MVC_Resto_Frontend.Models;
 using Lab2_MVC_Resto_Frontend.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -21,10 +23,15 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(_baseUri);
         }
+
+        //[Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             // Get bookings from API
-            var responseBookings = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}bookings");
+            var token = HttpContext.Request.Cookies["jwtToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var responseBookings = await _httpClient.GetStringAsync("bookings");
             var bookings = JsonSerializer.Deserialize<IEnumerable<BookingWithTablesEndTimeDto>>(responseBookings, _options);
 
             // Show bookings from now and one week ahead
@@ -32,7 +39,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             var endDate = DateTime.Today.AddDays(7);
 
             // Get restaurant's tables from API
-            var responseTables = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}tables");
+            var responseTables = await _httpClient.GetStringAsync("tables");
             var tables = JsonSerializer.Deserialize<List<TableVM>>(responseTables, _options);
 
             foreach (var table in tables)
@@ -69,12 +76,15 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         {
             return View();
         }
+        [Authorize]
         // admin
         public async Task<IActionResult> AddBooking()
         {
             return View();
         }
 
+        [Authorize]
+        // admin
         [HttpPost]
         public async Task<IActionResult> AddBooking(BookingAddVM booking)
         {
@@ -87,7 +97,9 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
 
             var json = JsonSerializer.Serialize(booking);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync($"{_httpClient.BaseAddress}bookings/booking/add", content);
+            var token = HttpContext.Request.Cookies["jwtToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.PostAsync("bookings/booking/add", content);
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = $"Reservation for {booking.AmountOfGuests} on {booking.ReservationStart} successfully created. We sent a confirmation mail to {booking.Email}.";
@@ -100,30 +112,38 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
             }
         }
 
-
+        [Authorize]
         // admin
         public async Task<IActionResult> GetBookings()
         {
             return View();
         }
+        [Authorize]
         // admin
         public async Task<IActionResult> UpdateBooking()
         {
            
             return View();
         }
+        [Authorize]
         // admin
         public async Task<IActionResult> RemoveBooking(string bookingNumber)
         {
-            var response = await _httpClient.GetStringAsync($"{_httpClient.BaseAddress}bookings/booking/{bookingNumber}/simple");
+            var token = HttpContext.Request.Cookies["jwtToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.GetStringAsync($"bookings/booking/{bookingNumber}/simple");
             var booking = JsonSerializer.Deserialize<BookingVM>(response, _options);
             
             return View(booking);
         }
+        [Authorize]
+        // admin
         [HttpPost]
         public async Task<IActionResult> RemoveBookingConfirmed(string bookingNumber)
         {
-            var response = await _httpClient.DeleteAsync($"{_httpClient.BaseAddress}bookings/booking/{bookingNumber}/delete");
+            var token = HttpContext.Request.Cookies["jwtToken"];
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.DeleteAsync($"bookings/booking/{bookingNumber}/delete");
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = $"Booking nr {bookingNumber} successfully deleted!";

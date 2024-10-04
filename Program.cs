@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace Lab2_MVC_Resto_Frontend
 {
     public class Program
@@ -9,6 +11,24 @@ namespace Lab2_MVC_Resto_Frontend
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();
+
+            builder.Services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Admin/Login";
+                });
+            builder.Services.AddAuthorization();
+            // deetta hjälpte inte med Authorization för bara Admin
+            //options =>
+            //{
+            //    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            //});
 
             var app = builder.Build();
 
@@ -25,6 +45,7 @@ namespace Lab2_MVC_Resto_Frontend
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
