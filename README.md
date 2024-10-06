@@ -11,9 +11,11 @@ https://github.com/Magdagasikara/Lab1-WebAPI_Db_Resto
 Part 3, user's book a table component:  
 https://github.com/Magdagasikara/Lab3-Resto_React  
 
+___
 Admin can book any time and any amount of customers (within restaurant's current capacity).  
 User has limitations.  
 
+___
 Possible improvements:  
 - menu printable  
 - DealOfTheDay: some text if backend is down  
