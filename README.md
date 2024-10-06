@@ -1,8 +1,10 @@
 # Lab2-MVC_Resto_Frontend
 
 
+___
 **Restaurant app (2/3), frontend. ASP.NET MVC.**  
 Restaurant website with menu (all currently available meals divided in categories) and admin interface available after login. Admin can manage menu and bookings.  
+___
 
 Part 1, backend with ASP.NET Core Web Api:  
 https://github.com/Magdagasikara/Lab1-WebAPI_Db_Resto  
