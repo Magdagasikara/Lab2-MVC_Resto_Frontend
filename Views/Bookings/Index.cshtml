@@ -8,23 +8,30 @@
 @* idea from https://codepen.io/crezzur/pen/JjXjojR then a lot of help by Chat GPT *@
 @model ScheduleVM
 
-<section id="booking-add">
+<section id="message">
     @{
-        if (TempData["SuccessMessage"] != null)
+        // 1. TempData comes from other actions, ViewData from this specific action
+        // 2. I use "as string" below so that in case it is not a string, the result will be null without throwing an exception.
+        // .ToString() or no conversion could throw an exception.
+        string successMessage = ViewData["SuccessMessage"] as string ?? TempData["SuccessMessage"] as string;
+        string errorMessage = ViewData["ErrorMessage"] as string ?? TempData["ErrorMessage"] as string;
+
+        if (!string.IsNullOrEmpty(successMessage))
         {
             <div class="alert alert-success">
-                @TempData["SuccessMessage"]
+                @successMessage
             </div>
-            TempData["SuccessMessage"] = null;
         }
-        else if (TempData["ErrorMessage"] != null)
+        else if (!string.IsNullOrEmpty(errorMessage))
         {
             <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
+                @errorMessage
             </div>
-            TempData["ErrorMessage"] = null;
         }
     }
+</section>
+
+<section id="booking-add">
     <a asp-controller="Bookings" asp-action="AddBooking" class="btn btn-primary">
         Add a new reservation
     </a>
@@ -53,15 +60,15 @@
                     @while (currentTime <= Model.EndDate)
                     {
                         var booking = table.Bookings
-                            .SingleOrDefault(b => 
-                                b.ReservationStart <= currentTime && 
-                                b.ReservationEnd > currentTime);
+                        .SingleOrDefault(b =>
+                        b.ReservationStart <= currentTime &&
+                        b.ReservationEnd > currentTime);
 
                         if (booking != null)
                         {
                             // Count amount of 30min-intervals for each booking to be displayed on
                             // Reservations are being found only once in the logic and should be displayed until the ReservationEnd
-                            // "currentTime" is used below instead of ReservationStart so that I can show reservations 
+                            // "currentTime" is used below instead of ReservationStart so that I can show reservations
                             // that started earlier than shown in the schedule and still with correct ReservationEnd
                             var durationInMinutes = (booking.ReservationEnd - currentTime).TotalMinutes;
                             var colspan = (int)(durationInMinutes / 30); // Antal halvtimmar

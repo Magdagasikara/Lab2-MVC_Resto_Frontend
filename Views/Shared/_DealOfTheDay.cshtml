@@ -1,5 +1,14 @@
-﻿<section 
-         id="dealOfTheDay">
+﻿<section id="dealOfTheDay">
+    @{
+        string errorMessage = ViewData["ErrorMessage"] as string;
+
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">
+                @errorMessage
+            </div>
+        }
+    }
 </section>
 
 <script>
@@ -27,9 +36,9 @@
         const dealOfTheDay = document.getElementById("dealOfTheDay");
 
         let htmlContent = `
-                        <h4>Tre rätter för 199kr</h4>
-                        <ul>
-                   `;
+                            <h4>Tre rätter för 199kr</h4>
+                            <ul>
+                       `;
         let categoryCounter = 0;
         menu.map((category) => {
             const meals = category.meals.length;
@@ -49,8 +58,8 @@
             categoryCounter++;
         })
         htmlContent += `
-                        </ul >
-                    `;
+                            </ul >
+                        `;
         dealOfTheDay.innerHTML = htmlContent;
     }
 

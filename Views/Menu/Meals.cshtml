@@ -2,30 +2,33 @@
 @section metadata {
     <meta name="description" content="Admin's subpage with a list of all meals.">
 }
-
 @model List<MealDetailVM>
 @{
     Layout = "_LayoutIFrame";
     int counter = 0;
 }
 
-<section id="meal-add">
+<section id="message">
     @{
-        if (TempData["SuccessMessage"] != null)
+        string successMessage = ViewData["SuccessMessage"] as string ?? TempData["SuccessMessage"] as string;
+        string errorMessage = ViewData["ErrorMessage"] as string ?? TempData["ErrorMessage"] as string;
+
+        if (!string.IsNullOrEmpty(successMessage))
         {
             <div class="alert alert-success">
-                @TempData["SuccessMessage"]
+                @successMessage
             </div>
-            TempData["SuccessMessage"] = null;
         }
-        else if (TempData["ErrorMessage"] != null)
+        else if (!string.IsNullOrEmpty(errorMessage))
         {
             <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
+                @errorMessage
             </div>
-            TempData["ErrorMessage"] = null;
         }
     }
+</section>
+
+<section id="meal-add">
     <a asp-controller="Menu" asp-action="AddMeal" class="btn btn-primary">
         Add a new meal
     </a>

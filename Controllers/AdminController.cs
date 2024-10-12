@@ -24,7 +24,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         }
 
         [Authorize]
-        //[Authorize]
+        //admin
         public IActionResult Index()
         {
 
@@ -39,49 +39,62 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginVM login)
         {
-            // make a login request and get token out of it
-            var response = await _httpClient.PostAsJsonAsync($"accounts/login", login);
-            if (!response.IsSuccessStatusCode)
+            try
             {
+                // make a login request and get token out of it
+                var response = await _httpClient.PostAsJsonAsync($"accounts/login", login);
+                //if (!response.IsSuccessStatusCode)
+                //{
+                //    return View(login);
+                //}
+                Console.WriteLine("statuscode " + response.StatusCode);
+                var json = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(json);
+                var token = JsonSerializer.Deserialize<TokenResponseVM>(json, _options);
+
+                // JWT token is a string consisting of 3 parts: Header (algorithm & token type), Payload (claims) and Signature (to check nobody modified payload).
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token.Token);
+
+                // get claims and put them to ClaimsIdentity (one role/inlog) and ClaimsPrincipal (one user/entity)
+                var claims = jwtToken.Claims.ToList();
+                foreach (var claim in claims)
+                {
+
+                    Console.WriteLine("claim: " + claim);
+                }
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity); // en principal (användare/entitet) kan ha flera Identities
+
+                // sign in and create a session cookie
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
+                {
+                    IsPersistent = true,// user should stay logged in over different sessions????
+                    ExpiresUtc = jwtToken.ValidTo
+                });
+
+                // create and save a jwt-token in the browser
+                HttpContext.Response.Cookies.Append("jwtToken", token.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = jwtToken.ValidTo
+                });
+
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
                 return View(login);
             }
-            Console.WriteLine("statuscode " + response.StatusCode);
-            var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(json);
-            var token = JsonSerializer.Deserialize<TokenResponseVM>(json, _options);
-
-            // JWT token is a string consisting of 3 parts: Header (algorithm & token type), Payload (claims) and Signature (to check nobody modified payload).
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token.Token);
-
-            // get claims and put them to ClaimsIdentity (one role/inlog) and ClaimsPrincipal (one user/entity)
-            var claims = jwtToken.Claims.ToList();
-            foreach (var claim in claims)
+            catch (Exception)
             {
-                
-                Console.WriteLine("claim: " + claim);
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+                return View(login);
             }
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity); // en principal (användare/entitet) kan ha flera Identities
-
-            // sign in and create a session cookie
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
-            {
-                IsPersistent = true,// user should stay logged in over different sessions????
-                ExpiresUtc = jwtToken.ValidTo
-            });
-
-            // create and save a jwt-token in the browser
-            HttpContext.Response.Cookies.Append("jwtToken", token.Token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = jwtToken.ValidTo
-            });
-
-            return RedirectToAction("Index");
         }
         [HttpPost]
         // borde den ha Authorize?

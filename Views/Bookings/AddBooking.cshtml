@@ -7,12 +7,14 @@
     <meta name="description" content="Form when admin can add a reservation.">
 }
 
-@if (ViewData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @ViewData["ErrorMessage"]
-    </div>
-}
+<section id="message">
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @ViewData["ErrorMessage"]
+        </div>
+    }
+</section>
 
 <section id="form-add-booking">
     @using (Html.BeginForm("AddBooking", "Bookings", FormMethod.Post, new { @class = "needs-validation row g-3", novalidate = "true" }))

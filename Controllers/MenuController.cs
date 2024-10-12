@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
@@ -26,16 +27,38 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var response = await _httpClient.GetStringAsync("menu");
-            var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response, _options);
+            var menu = new List<MealCategoryWithMealsVM>();
+            try
+            {
+                var response = await _httpClient.GetStringAsync("menu");
+                menu = JsonSerializer.Deserialize<List<MealCategoryWithMealsVM>>(response, _options);
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Just come by and try instead of checking things online!";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Just come by and try instead of checking things online!";
+            }
             return View(menu);
         }
         public async Task<IActionResult> DealOfTheDay()
         {
-
-            var response = await _httpClient.GetStringAsync("menu");
-            var menu = JsonSerializer.Deserialize<IEnumerable<MealCategoryWithMealsVM>>(response, _options);
-            // try - catch och skriv ut i konsolen genom ViewData?
+            var menu = new List<MealCategoryWithMealsVM>();
+            try
+            {
+                var response = await _httpClient.GetStringAsync("menu");
+                menu = JsonSerializer.Deserialize<List<MealCategoryWithMealsVM>>(response, _options);
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Just come by and try instead of checking things online!";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Just come by and try instead of checking things online!";
+            }
             return PartialView("_DealOfTheDay", menu);
         }
         [Authorize]
@@ -49,29 +72,41 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMealCategory(MealCategoryVM category)
         {
+            // no view for this one, possible improvement!
+            // add try-catch then
+
             if (!ModelState.IsValid)
             {
                 return View(category);
             }
             var token = HttpContext.Request.Cookies["jwtToken"];
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            // funkar det med PostAsJsonAsync?? ingen encoding här.
             var response = await _httpClient.PostAsJsonAsync("menu/categories/category/add", category);
-            // kanske hämta status code?
-            // och 200-serie så till "you added XXX"?
             return RedirectToAction("Index");
         }
         [Authorize]
         // admin
         public async Task<IActionResult> AddMeal()
         {
-            // get categories to choose among
-            var token = HttpContext.Request.Cookies["jwtToken"];
-            _httpClient.DefaultRequestHeaders.Authorization=new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.GetStringAsync("menu/categories");
-            var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(response, _options);
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-
+            try
+            {
+                // get categories to choose among
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.GetStringAsync("menu/categories");
+                var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(response, _options);
+                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+                return View();
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+                return View();
+            }
             return View();
         }
         [Authorize]
@@ -79,31 +114,46 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMeal(MealAddVM meal)
         {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(meal);
+                }
+                var json = JsonSerializer.Serialize(meal);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.PostAsync("menu/meals/meal/add", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = $"{meal.Name} successfully added!";
+                    return RedirectToAction("Meals");
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
+                }
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
 
-            if (!ModelState.IsValid)
-            {
-                return View(meal);
-            }
-            var json = JsonSerializer.Serialize(meal);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var token = HttpContext.Request.Cookies["jwtToken"];
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.PostAsync("menu/meals/meal/add", content);
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = $"{meal.Name} successfully added!";
-                return RedirectToAction("Meals");
-            }
-            else
-            {
-                ViewData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
-                return View(meal);
-            }
+            return View(meal);
         }
         [Authorize]
         // admin
         public async Task<IActionResult> MealCategories()
         {
+
+            // no view for this one, possible improvement!
+            // add try-catch then
+
             var token = HttpContext.Request.Cookies["jwtToken"];
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.GetStringAsync("menu/categories");
@@ -115,74 +165,117 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         // admin
         public async Task<IActionResult> Meals()
         {
-            var token = HttpContext.Request.Cookies["jwtToken"];
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.GetStringAsync("menu/meals");
-            var meals = JsonSerializer.Deserialize<IEnumerable<MealDetailVM>>(response, _options);
+            var meals = new List<MealDetailVM>();
+            try
+            {
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.GetStringAsync("menu/meals");
+                meals = JsonSerializer.Deserialize<List<MealDetailVM>>(response, _options);
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
             return View(meals);
         }
+
         [Authorize]
         // admin
         public async Task<IActionResult> EditCategory()
         {
+            // not implemented, possible improvement!
+            // add try-catch then
             return View();
         }
+
         [Authorize]
         // admin
         public async Task<IActionResult> EditMeal(int mealId)
         {
-            // get info on the chose meal
-            // as long as I dont transfer the meal model from Meal List to Edit I make a GET request
-            var token = HttpContext.Request.Cookies["jwtToken"];
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var responseMeal = await _httpClient.GetStringAsync($"menu/meals/meal/{mealId}");
-            var meal = JsonSerializer.Deserialize<MealDetailVM>(responseMeal, _options);
+            var meal = new MealDetailVM();
+            ViewBag.Categories = new List<MealCategoryVM>();
+            try
+            {
+                // First fetch info on the chosen meal (I could transfer the meal model here but now I make a GET request with id instead)
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var responseMeal = await _httpClient.GetStringAsync($"menu/meals/meal/{mealId}");
+                meal = JsonSerializer.Deserialize<MealDetailVM>(responseMeal, _options);
 
-            // get categories to choose among
-            var responseCategories = await _httpClient.GetStringAsync("menu/categories");
-            var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(responseCategories, _options);
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
-
+                // get categories to choose among
+                var responseCategories = await _httpClient.GetStringAsync("menu/categories");
+                var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(responseCategories, _options);
+                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
             return View(meal);
         }
+
         [Authorize]
         // admin
         [HttpPost]
         public async Task<IActionResult> EditMeal(MealDetailVM meal)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(meal);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return View(meal);
+                }
 
-            var json = JsonSerializer.Serialize(meal);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var token = HttpContext.Request.Cookies["jwtToken"];
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await _httpClient.PatchAsync("menu/meals/meal/update", content);
-            //var response = await _httpClient.PatchAsJsonAsync("menu/meals/meal/update", meal);
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = $"{meal.Name} successfully updated!";
-                return RedirectToAction("Meals");
-            }
-            else
-            {
-                // Apparently ViewBag needs to be refilled in case of error
-                var responseCategories = await _httpClient.GetStringAsync("menu/categories");
-                var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(responseCategories, _options);
-                ViewBag.Categories = new SelectList(categories, "Id", "Name");
+                var json = JsonSerializer.Serialize(meal);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await _httpClient.PatchAsync("menu/meals/meal/update", content);
+                //var response = await _httpClient.PatchAsJsonAsync("menu/meals/meal/update", meal);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = $"{meal.Name} successfully updated!";
+                    return RedirectToAction("Meals");
+                }
+                else
+                {
+                    // Apparently ViewBag needs to be refilled in case of error
+                    var responseCategories = await _httpClient.GetStringAsync("menu/categories");
+                    var categories = JsonSerializer.Deserialize<IEnumerable<MealCategoryVM>>(responseCategories, _options);
+                    ViewBag.Categories = new SelectList(categories, "Id", "Name");
 
-                ViewData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
-                return View(meal);
+                    ViewData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
+                }
             }
+            catch (HttpRequestException)
+            {
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception)
+            {
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
+            return View(meal);
         }
+
         [Authorize]
         // admin
         public async Task<IActionResult> RemoveCategory()
         {
+            // not implemented, possible improvement!
+            // add try-catch then
             return View();
         }
+
         [Authorize]
         // admin
         public IActionResult RemoveMeal(int mealId)
@@ -194,6 +287,7 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveMealConfirm(int mealId)
         {
+            try { 
             var token = HttpContext.Request.Cookies["jwtToken"];
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.DeleteAsync($"menu/meals/meal/{mealId}/delete");
@@ -207,6 +301,18 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
                 TempData["ErrorMessage"] = "Something went wrong. Feel free to try again.";
                 return RedirectToAction("Meals");
             }
+            }
+            catch (HttpRequestException)
+            {
+                TempData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+                return RedirectToAction("Meals");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+                return RedirectToAction("Meals");
+            }
+
         }
     }
 

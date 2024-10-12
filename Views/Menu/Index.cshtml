@@ -4,6 +4,19 @@
     <meta name="description" content="Restaurant's menu divided into categories. List includes only available meals.">
 }
 
+<section id="message">
+    @{
+        string errorMessage = ViewData["ErrorMessage"] as string;
+
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">
+                @errorMessage
+            </div>
+        }
+    }
+</section>
+
 @{
     int totalMeals = @Model.SelectMany(m => m.Meals).Count();
     int mealCount = 1;

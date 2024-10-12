@@ -14,7 +14,7 @@
         @ViewData["ErrorMessage"]
     </div>
 }
-
+else {
 <section id="form-add-meal">
     @* flytta style härifrån när det funkar! *@
     @* @Html.ActionLink("Add", "Menu", "AddMeal") *@
@@ -50,7 +50,7 @@
         <button type="button" id="buttonCancel">Cancel</button>
     }
 </section>
-
+}
 
 <script>
     const buttonAddMeal = document.getElementById("button-add-meal")

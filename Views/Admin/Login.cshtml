@@ -4,13 +4,22 @@
     <meta name="description" content="Admin's logging page">
 }
 
+<section id="message">
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @ViewData["ErrorMessage"]
+        </div>
+    }
+</section>
+
 <form asp-action="Login" method="post">
-    
+
     <label asp-for="Email">Email</label>
     <input asp-for="Email" />
 
     <label asp-for="Password">Password</label>
-    <input asp-for="Password" type="password"/>
+    <input asp-for="Password" type="password" />
 
     <button type="submit" class="btn btn-secondary">Login</button>
 </form>
