@@ -30,3 +30,4 @@ Possible improvements:
 	- https://stackoverflow.com/questions/62950905/net-mvc-how-in-a-url-action-to-send-an-object-in-an-object  
 - improve terrible layout of forms: add meal, add reservation, edit...  
 - how to get lazy loading of admin tabs  
+- DealOfTheDay doesn't produce logs
