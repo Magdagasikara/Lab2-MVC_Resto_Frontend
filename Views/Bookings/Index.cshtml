@@ -31,83 +31,89 @@
     }
 </section>
 
-<section id="booking-add">
-    <a asp-controller="Bookings" asp-action="AddBooking" class="btn btn-primary">
-        Add a new reservation
-    </a>
-</section>
+@{
+    var errorFromIndex = ViewData["ErrorMessage"] as string;
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered caption-top">
-        <caption>List of current reservations</caption>
-        <thead>
-            <tr>
-                <th>Table</th>
-                @for (var time = Model.StartDate; time <= Model.EndDate; time = time.AddMinutes(30))
-                {
-                    <th>@time.ToString("dd/MM/yyyy HH:mm")</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var table in Model.Tables)
-            {
-                <tr>
-                    <td>Table @table.TableNumber<br> (@table.AmountOfPlaces places)</td>
-                    @{
-                        var currentTime = Model.StartDate;
-                    }
-                    @while (currentTime <= Model.EndDate)
+    if (string.IsNullOrEmpty(errorFromIndex))
+    {
+        <section id="booking-add">
+            <a asp-controller="Bookings" asp-action="AddBooking" class="btn btn-primary">
+                Add a new reservation
+            </a>
+        </section>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered caption-top">
+                <caption>List of current reservations</caption>
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        @for (var time = Model.StartDate; time <= Model.EndDate; time = time.AddMinutes(30))
+                        {
+                            <th>@time.ToString("dd/MM/yyyy HH:mm")</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var table in Model.Tables)
                     {
-                        var booking = table.Bookings
-                        .SingleOrDefault(b =>
-                        b.ReservationStart <= currentTime &&
-                        b.ReservationEnd > currentTime);
+                        <tr>
+                            <td>Table @table.TableNumber<br> (@table.AmountOfPlaces places)</td>
+                            @{
+                                var currentTime = Model.StartDate;
+                            }
+                            @while (currentTime <= Model.EndDate)
+                            {
+                                var booking = table.Bookings
+                                .SingleOrDefault(b =>
+                                b.ReservationStart <= currentTime &&
+                                b.ReservationEnd > currentTime);
 
-                        if (booking != null)
-                        {
-                            // Count amount of 30min-intervals for each booking to be displayed on
-                            // Reservations are being found only once in the logic and should be displayed until the ReservationEnd
-                            // "currentTime" is used below instead of ReservationStart so that I can show reservations
-                            // that started earlier than shown in the schedule and still with correct ReservationEnd
-                            var durationInMinutes = (booking.ReservationEnd - currentTime).TotalMinutes;
-                            var colspan = (int)(durationInMinutes / 30); // Antal halvtimmar
+                                if (booking != null)
+                                {
+                                    // Count amount of 30min-intervals for each booking to be displayed on
+                                    // Reservations are being found only once in the logic and should be displayed until the ReservationEnd
+                                    // "currentTime" is used below instead of ReservationStart so that I can show reservations
+                                    // that started earlier than shown in the schedule and still with correct ReservationEnd
+                                    var durationInMinutes = (booking.ReservationEnd - currentTime).TotalMinutes;
+                                    var colspan = (int)(durationInMinutes / 30); // Antal halvtimmar
 
-                            // One cell for the whole booking
-                            <td colspan="@colspan">
-                                <div class="booking">
-                                    <div class="booking-details">
-                                        <h3>@booking.Email</h3>
-                                        <span>@booking.BookingNumber</span>
-                                        <div>Guests: @booking.AmountOfGuests</div>
-                                        <div>Time: @booking.ReservationStart.ToString("HH:mm") - @booking.ReservationEnd.ToString("HH:mm")</div>
-                                    </div>
-                                    <div class="icons">
-                                        <a asp-controller="Bookings" asp-action="EditBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Edit booking">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <a href=@Url.Action("RemoveBooking","Bookings",new { bookingNumber= booking.BookingNumber }) aria-label="Remove booking">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </td>
+                                    // One cell for the whole booking
+                                    <td colspan="@colspan">
+                                        <div class="booking">
+                                            <div class="booking-details">
+                                                <h3>@booking.Email</h3>
+                                                <span>@booking.BookingNumber</span>
+                                                <div>Guests: @booking.AmountOfGuests</div>
+                                                <div>Time: @booking.ReservationStart.ToString("HH:mm") - @booking.ReservationEnd.ToString("HH:mm")</div>
+                                            </div>
+                                            <div class="icons">
+                                                <a asp-controller="Bookings" asp-action="UpdateBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Update booking">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </a>
+                                                <a href=@Url.Action("RemoveBooking","Bookings",new { bookingNumber= booking.BookingNumber }) aria-label="Remove booking">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                            // Set current time to the reservation end time, rounded to half'n'hour
-                            currentTime = booking.ReservationEnd.Date.AddMinutes(Math.Ceiling(booking.ReservationEnd.TimeOfDay.TotalMinutes / 30) * 30);
-                        }
-                        else
-                        {
-                            <td></td>
-                            currentTime = currentTime.AddMinutes(30);
-                        }
+                                    // Set current time to the reservation end time, rounded to half'n'hour
+                                    currentTime = booking.ReservationEnd.Date.AddMinutes(Math.Ceiling(booking.ReservationEnd.TimeOfDay.TotalMinutes / 30) * 30);
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    currentTime = currentTime.AddMinutes(30);
+                                }
+                            }
+                        </tr>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
+                </tbody>
+            </table>
+        </div>
+    }
+}
 <script>
 
     // When admin opens the window, the current time should be visible first (i.e. scroll to the current half n hour)

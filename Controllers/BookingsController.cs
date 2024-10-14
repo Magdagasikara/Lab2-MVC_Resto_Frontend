@@ -14,14 +14,16 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly string _baseUri = "https://localhost:7212/api/";
+        private readonly ILogger<BookingsController> _logger;
         private readonly JsonSerializerOptions _options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
-        public BookingsController(HttpClient httpClient)
+        public BookingsController(HttpClient httpClient, ILogger<BookingsController> logger)
         {
             _httpClient = httpClient;
             _httpClient.BaseAddress = new Uri(_baseUri);
+            _logger = logger;
         }
 
         //[Authorize(Roles = "Admin")]
@@ -139,10 +141,94 @@ namespace Lab2_MVC_Resto_Frontend.Controllers
 
         [Authorize]
         // admin
-        public async Task<IActionResult> UpdateBooking()
+        public async Task<IActionResult> UpdateBooking(string bookingNumber)
         {
+            var bookingToUpdate = new BookingUpdateVM();
+            try
+            {
+                // First fetch info on the chosen meal (I could transfer the meal model here but now I make a GET request with id instead)
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                if (string.IsNullOrEmpty(token)) _logger.LogWarning("JWT token is missing in the request.");
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            return View();
+                _logger.LogInformation($"Fetching booking at time {DateTime.Now}.");
+                var response = await _httpClient.GetStringAsync($"bookings/booking/{bookingNumber}/simple");
+                var booking = JsonSerializer.Deserialize<BookingVM>(response, _options);
+                _logger.LogInformation($"Booking fetched at time {DateTime.Now}.");
+
+                TimeSpan duration = booking.ReservationEnd - booking.ReservationStart;
+                double reservationDurationInHours = duration.TotalHours;
+
+                bookingToUpdate = new BookingUpdateVM()
+                {
+                    BookingNumber = booking.BookingNumber,
+                    AmountOfGuests = booking.AmountOfGuests,
+                    Email = booking.Email,
+                    ReservationStart = booking.ReservationStart,
+                    ReservationDurationInHours = reservationDurationInHours
+                };
+
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError($"HTTP request error when fetching booking at time {DateTime.Now}: {ex.Message}.");
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Unexpected error when fetching booking at time {DateTime.Now}: {ex.Message}.");
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
+            return View(bookingToUpdate);
+
+        }
+        [HttpPost]
+        [Authorize]
+        // admin
+        public async Task<IActionResult> UpdateBooking(BookingUpdateVM booking)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning($"Invalid BookingUpdateVM model received: {ModelState.ErrorCount}", ModelState.Values.SelectMany(v => v.Errors));
+                    return View(booking);
+                }
+
+                var json = JsonSerializer.Serialize(booking);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var token = HttpContext.Request.Cookies["jwtToken"];
+                if (string.IsNullOrEmpty(token)) _logger.LogWarning("JWT token is missing in the request.");
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                _logger.LogInformation($"Updating booking at time {DateTime.Now}.");
+                var response = await _httpClient.PatchAsync("bookings/booking/update/", content);
+                _logger.LogInformation($"Booking updated at time {DateTime.Now}.");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Booking {booking.BookingNumber} successfully updated at time {DateTime.Now}.");
+                    TempData["SuccessMessage"] = $"Booking {booking.BookingNumber} successfully updated!";
+                    return RedirectToAction("Index");
+                }
+                else
+                 {
+                    _logger.LogError($"Unexpected error TEST HALLO {DateTime.Now}.");
+                    ViewData["ErrorMessage"] = "Do you try to use a new email? Forget it, Magda had a totally wrong idea about what to do in this case. Try not doing it.";
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError($"HTTP request error when updating a booking at time {DateTime.Now}: {ex.Message}.");
+                ViewData["ErrorMessage"] = "Unable to reach the API. Please try again later.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Unexpected error when updating a booking at time {DateTime.Now}: {ex.Message}.");
+                ViewData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+            }
+            return View(booking);
+
         }
 
         [Authorize]

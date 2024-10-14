@@ -1,0 +1,69 @@
+﻿@using Lab2_MVC_Resto_Frontend.Models.ViewModels
+@model BookingUpdateVM
+@{
+    Layout = "_LayoutIFrame";
+}
+@section metadata {
+    <meta name="description" content="Form where admin can modify a reservation.">
+}
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <section id="message">
+        @if (ViewData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">
+                @ViewData["ErrorMessage"]
+            </div>
+        }
+    </section>
+}
+else
+{
+    <section id="form-add-booking">
+        @using (Html.BeginForm("UpdateBooking", "Bookings", FormMethod.Post, new { @class = "needs-validation row g-3", novalidate = "true" }))
+        {
+            @* BookingNumber *@
+            @Html.HiddenFor(model => model.BookingNumber)
+
+            @* Email *@
+            @Html.LabelFor(model => model.Email)
+            @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)
+
+            @* AmountOfGuests *@
+            @Html.LabelFor(model => model.AmountOfGuests)
+            @Html.EditorFor(model => model.AmountOfGuests)
+            @Html.ValidationMessageFor(model => model.AmountOfGuests)
+
+            @* ReservationStart *@
+            @Html.LabelFor(model => model.ReservationStart)
+            @* @Html.TextBoxFor(model => model.ReservationStart, "HH:mm", new { type = "time", @class = "form-control" }) *@
+            @Html.EditorFor(model => model.ReservationStart)
+            @Html.ValidationMessageFor(model => model.ReservationStart)
+            @* @Html.TextBoxFor(model => model.InvoiceDate, new { @type = "date", @Value = Model.InvoiceDate.Value.ToString("yyyy-MM-dd") }) *@
+
+            @* ReservationDurationInHours *@
+            @Html.LabelFor(model => model.ReservationDurationInHours)
+            @Html.EditorFor(model => model.ReservationDurationInHours)
+            @Html.ValidationMessageFor(model => model.ReservationDurationInHours)
+
+            @* TimeStamp is set in the controller *@
+
+            @Html.ValidationSummary()
+
+            <button type="submit">Edit</button>
+            <button type="button" id="buttonCancel">Cancel</button>
+        }
+    </section>
+}
+
+<script>
+    const buttonCancel = document.getElementById("buttonCancel")
+    if (buttonCancel) {
+        buttonCancel.addEventListener("click",
+            (c) => {
+                history.back(); //den backar dock bara till tex form med invalid om det var senast,kanske bättre med länk
+            });
+    }
+</script>
