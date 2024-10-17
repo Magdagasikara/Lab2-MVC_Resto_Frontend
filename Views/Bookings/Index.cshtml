@@ -88,11 +88,11 @@
                                                 <div>Time: @booking.ReservationStart.ToString("HH:mm") - @booking.ReservationEnd.ToString("HH:mm")</div>
                                             </div>
                                             <div class="icons">
-                                                <a asp-controller="Bookings" asp-action="UpdateBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Update booking">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                <a asp-controller="Bookings" asp-action="UpdateBooking" asp-route-bookingNumber=@booking.BookingNumber aria-label="Update booking here">
+                                                    <i class="fa-solid fa-pen-to-square" title="Edit this booking?"></i>
                                                 </a>
-                                                <a href=@Url.Action("RemoveBooking","Bookings",new { bookingNumber= booking.BookingNumber }) aria-label="Remove booking">
-                                                    <i class="fa-solid fa-trash-can"></i>
+                                                <a href=@Url.Action("RemoveBooking","Bookings",new { bookingNumber= booking.BookingNumber }) aria-label="Delete booking here">
+                                                    <i class="fa-solid fa-trash-can" title="Delete this booking?"></i>
                                                 </a>
                                             </div>
                                         </div>
